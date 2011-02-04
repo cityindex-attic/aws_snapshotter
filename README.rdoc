@@ -1,0 +1,17 @@
+= Description
+Creates a snapshot of each EBS volume attached to the list of instances provided in aws_snapshotter_settings (or all instances if an empty array is provided)
+
+Each instance is stopped, to ensure that the snapshot will contain consistent data.
+
+An aws_snapshotter_settings.rb.example file is provided, to configure the aws_snapshotter just...
+
+`cp aws_snapshotter_settings.rb.example aws_snapshotter_settings.rb`
+
+Then change the values to include your AWS credentials, and the list of instances you want to create snapshots for.  Easy!
+
+= TODO
+* More error handling
+  * What to do if all instances don't stop
+  * What to do if all instances don't start
+* Notifications (email a distribution list?)
+* Purge old snapshots based on settings

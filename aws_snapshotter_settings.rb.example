@@ -1,0 +1,3 @@
+Settings::aws_access_key_id       = ""
+Settings::aws_secret_access_key   = ""
+Settings::instances               = ["i-eeeeeeee","i-aaaaaaaa"] # Leaving this blank will snapshot all EBS vols on all instances
