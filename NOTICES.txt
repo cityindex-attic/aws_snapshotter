@@ -1,0 +1,6 @@
+AWS snapshotter
+Copyright 2011 CityIndex Ltd.
+
+This product includes software developed at
+	CityIndex Ltd. (http://www.cityindex.com)
+
