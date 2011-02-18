@@ -144,5 +144,5 @@ if ids != []
 
 else
   log "No running instances were found to create snapshots of.  Double check your settings."
-  sns.publish(Settings.sns_topic_id, format_messages_for_sns, "AWS Snapshotter Invalid Configuration")
+  sns.publish(Settings.sns_topic_id, format_messages_for_sns, "AWS Snapshotter Invalid Configuration") if sns_configured
 end
