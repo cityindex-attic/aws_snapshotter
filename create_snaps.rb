@@ -34,7 +34,7 @@ sns_configured = false
 
 if Settings.notify_by_sns
   if Settings.sns_topic_id.right_blank? && Settings.create_sns
-    topic_arn = sns.create_topic('AWSSnapshoterEvents')
+    topic_arn = sns.create_topic('AWSSnapshotterEvents')
     if topic_arn
       lines = File.readlines('./aws_snapshotter_settings.rb')
       File.open('./aws_snapshotter_settings.rb', 'w') do |f|

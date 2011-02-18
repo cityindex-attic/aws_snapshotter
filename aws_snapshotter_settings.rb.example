@@ -5,7 +5,16 @@ Settings::instances               = ["i-eeeeeeee","i-aaaaaaaa"] # Leaving this b
 Settings::snapshots_to_keep       = 7
 
 # Optional inputs
+
+# Set to true if you want to be notified via SNS when aws_snapshotter completes successfully, or encounters a problem
 Settings::notify_by_sns           = false
-Settings::create_sns              = false
+
+# The arn of an existing SNS topic which aws_snapshotter will publish to.  If left blank, aws_snapshotter can create
+# a new SNS topic named "AWSSnapshotterEvents" if create_sns (below) is set to true.
 Settings::sns_topic_id            = ""
+
+# Set to true if you want aws_snapshotter to create a new SNS topic if sns_topic_id (above) is blank
+Settings::create_sns              = false
+
+# Only used once when creating a new SNS topic (if create_sns is true).  A list of email subscribers to the new topic
 Settings::sns_subscribers         = ["email1@domain.com","email2@domain.com"]
