@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'right_aws'
 require 'settings'
+require 'enumerator'
 
 transition_change_timeouts  = [5, 10, 30, 60, 90, 120] # Total of 315 seconds, or just over 5 minutes
 timeout_sum                 = 0
@@ -68,6 +69,10 @@ instances_to_snapshot.delete_if { |instance| !Settings.instances.include?(instan
 
 ids = instances_to_snapshot.collect { |i| i[:aws_instance_id] }
 
+ips = instances_to_snapshot.to_enum(:each_with_index).collect { |ip,idx| {"PublicIp.#{idx}" => ip[:ip_address]} }
+
+eips = ec2.describe_addresses(ips)
+
 if ids != []
   log "About to stop the following AWS EC2 instances..."
   ids.each { |id| log "AWS Instance ID: #{id}" }
@@ -120,7 +125,7 @@ if ids != []
 
   ec2.start_instances(ids)
 
-  # Wait for all of them to be stopped..
+  # Wait for all of them to be started...
   transition_change_timeouts.each do |timeout|
     all_started = (ec2.describe_instances(ids).select { |i| i[:aws_state] == "running" }.count == ids.count)
     if all_started
@@ -137,9 +142,16 @@ if ids != []
                 format_messages_for_sns,
                 "Instance Restart Failed!") if sns_configured
   else
-    log "Finished creating #{volumes_snapshotted} snapshots from #{ids.count} instances in #{Time.now.to_i - startTs.to_i} seconds.  You've been snapshotted!"
+    # Reassign any EIPS
+    if eips.count > 0
+      eips.each do |eip|
+        ec2.associate_address(eip[:instance_id], eip[:public_ip])
+        log "Reassociating EIP #{eip[:public_ip]} with instance #{eip[:instance_id]}"
+      end
+    end
 
-    sns.publish(Settings.sns_topic_id, format_messages_for_sns, "Snapshots Completed!")
+    log "Finished creating #{volumes_snapshotted} snapshots from #{ids.count} instances in #{Time.now.to_i - startTs.to_i} seconds.  You've been snapshotted!"
+    sns.publish(Settings.sns_topic_id, format_messages_for_sns, "Snapshots Completed!") if sns_configured
   end
 
 else

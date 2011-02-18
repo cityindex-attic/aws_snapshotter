@@ -8,7 +8,9 @@
         "ec2:CreateSnapshot",
         "ec2:DeleteSnapshot",
         "ec2:DescribeSnapshots",
-        "ec2:DescribeTags"
+        "ec2:DescribeTags",
+        "ec2:DescribeAddresses",
+        "ec2:AssociateAddress"
       ],
       "Effect": "Allow",
       "Resource": "*"
