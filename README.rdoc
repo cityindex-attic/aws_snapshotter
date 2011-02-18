@@ -19,6 +19,15 @@ The AWS Snapshotter currently depends upon a build of the right_http_connection 
   $ gem install right_http_connection-1.3.0.gem
   $ gem install right_aws-2.1.0.gem
 
+There is an _iampolicy.json_ document included in the repository.  This is intended to be used with Amazon's Identity and Access Management {(IAM)}(http://aws.amazon.com/iam/)
+
+To apply this policy follow the "Get Tools" directions {here}(http://docs.amazonwebservices.com/IAM/latest/GettingStartedGuide/), then run the following commands.  This assumes that all of the iam binaries are accessible in your PATH environment variable, and that you're PWD is the directory which contains aws_snapshotter
+
+  $ iam-groupcreate -g AWSSnapshotter -v
+  $ iam-groupuploadpolicy -g AWSSnapshotter -f ./iam_policy.json -p SnapshotterActions
+  $ iam-usercreate -g AWSSnapshotter -k -u aws_snapshotter -v
+
+The first and second line of the response of iam-usercreate are the AWS Access Key ID and AWS Secret Access Key which are needed in your settings file.
 
 = TODO
 * More error handling
