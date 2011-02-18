@@ -1,3 +1,11 @@
+# Required inputs
 Settings::aws_access_key_id       = ""
 Settings::aws_secret_access_key   = ""
 Settings::instances               = ["i-eeeeeeee","i-aaaaaaaa"] # Leaving this blank will snapshot all EBS vols on all instances
+Settings::snapshots_to_keep       = 7
+
+# Optional inputs
+Settings::notify_by_sns           = false
+Settings::create_sns              = false
+Settings::sns_topic_id            = ""
+Settings::sns_subscribers         = ["email1@domain.com","email2@domain.com"]
