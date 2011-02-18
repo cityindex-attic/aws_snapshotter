@@ -7,7 +7,8 @@
         "ec2:StopInstances",
         "ec2:CreateSnapshot",
         "ec2:DeleteSnapshot",
-        "ec2:DescribeSnapshots"
+        "ec2:DescribeSnapshots",
+        "ec2:DescribeTags"
       ],
       "Effect": "Allow",
       "Resource": "*"

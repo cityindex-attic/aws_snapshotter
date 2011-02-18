@@ -95,16 +95,16 @@ if ids != []
     log "All instances are stopped, proceeding with snapshots..."
     instances_to_snapshot.each do |instance|
       instance[:block_device_mappings].each do |mapping|
-        log "Creating snapshot of volume #{mapping[:ebs_volume_id]} from instance #{instance[:aws_instance_id]}"
-        volumes_snapshotted += 1
-        ec2.create_snapshot(mapping[:ebs_volume_id], "aws_snapshotter automated snapshot of #{mapping[:ebs_volume_id]} at #{startDate}")
-
-        snapshots = []
-        ec2.describe_snapshots.sort {|a,b| b[:aws_started_at] <=> a[:aws_started_at]}.each do |snapshot|
-          if snapshot[:aws_volume_id] == mapping[:ebs_volume_id]
-            snapshots << snapshot
-          end
+        ebsvol = ec2.describe_tags(:filters => { 'resource-id' => mapping[:ebs_volume_id] })
+        name_tag = 'Unknown'
+        ebsvol.each do |tag|
+          name_tag = tag[:value] if tag[:key].downcase == 'name'
         end
+        snap_retval = ec2.create_snapshot(mapping[:ebs_volume_id], "aws_snapshotter automated snapshot of #{mapping[:ebs_volume_id]} --{#{name_tag}}-- at #{startDate}")
+        log "Created snapshot #{snap_retval[:aws_id]} of volume #{mapping[:ebs_volume_id]} --{#{name_tag}}-- from instance #{instance[:aws_instance_id]}"
+        volumes_snapshotted += 1
+
+        snapshots = ec2.describe_snapshots(:filters => {'volume-id' => mapping[:ebs_volume_id]}).sort {|a,b| a[:aws_started_at] <=> b[:aws_started_at]}
 
         if snapshots.count > Settings.snapshots_to_keep
           num_to_delete = snapshots.count - Settings.snapshots_to_keep
