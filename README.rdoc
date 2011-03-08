@@ -29,6 +29,11 @@ To apply this policy follow the "Get Tools" directions {here}(http://docs.amazon
 
 The first and second line of the response of iam-usercreate are the AWS Access Key ID and AWS Secret Access Key which are needed in your settings file.
 
+== Running aws_snapshotter
+Once you've created the IAM user and configured your aws_snapshotter_settings file, you can run the AWS Snapshotter with this simple command.
+
+  $ ruby create_snaps.rb
+
 = TODO
 * More error handling
   * It's okay if stopping and snapshotting instances fail, it's not okay if the instances are never restarted.
