@@ -19,9 +19,9 @@ The AWS Snapshotter currently depends upon a build of the right_http_connection 
   $ gem install right_http_connection-1.3.0.gem
   $ gem install right_aws-2.1.0.gem
 
-There is an _iampolicy.json_ document included in the repository.  This is intended to be used with Amazon's Identity and Access Management {(IAM)}(http://aws.amazon.com/iam/)
+There is an _iampolicy.json_ document included in the repository.  This is intended to be used with Amazon's Identity and Access Management {(IAM)}[http://aws.amazon.com/iam/]
 
-To apply this policy follow the "Get Tools" directions {here}(http://docs.amazonwebservices.com/IAM/latest/GettingStartedGuide/), then run the following commands.  This assumes that all of the iam binaries are accessible in your PATH environment variable, and that you're PWD is the directory which contains aws_snapshotter
+To apply this policy follow the "Get Tools" directions {here}[http://docs.amazonwebservices.com/IAM/latest/GettingStartedGuide/], then run the following commands.  This assumes that all of the iam binaries are accessible in your PATH environment variable, and that you're PWD is the directory which contains aws_snapshotter
 
   $ iam-groupcreate -g AWSSnapshotter -v
   $ iam-groupuploadpolicy -g AWSSnapshotter -f ./iam_policy.json -p SnapshotterActions
@@ -34,6 +34,18 @@ Once you've created the IAM user and configured your aws_snapshotter_settings fi
 
   $ ruby create_snaps.rb
 
+== Assumptions & Prerequisites
+The AWS Snapshotter is designed to take periodic snapshots of running EC2 instances.  The following assumptions are made about the instances defined in the _Settings::instances_ directive of the settings file (or all instances for your account, if _Settings::instances_ is left empty).
+
+* The instances are EBS backed, and can be stopped/started
+* The instances are in the "running" state when the AWS Snapshotter is run
+
+In order to ensure data integrity of the snapshots which are created, the running instances are first stopped so that I/O to the EBS volumes is halted.  The snapshot request is issued only after AWS Snapshotter verifies that the instance is stopped, and the instances are immediately restarted after the snapshot request is made.
+
+If an instance is stopped when the AWS Snapshotter is executed, no snapshot will be made for the EBS volumes attached to it, even if the instance is listed in the _Settings::instances_ directive.
+
 = TODO
 * More error handling
   * It's okay if stopping and snapshotting instances fail, it's not okay if the instances are never restarted.
+* Enhancements
+  * Maybe it's okay to take snapshots for instances that are listed and are already in the stopped state?
